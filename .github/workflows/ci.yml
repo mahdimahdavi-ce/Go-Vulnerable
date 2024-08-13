@@ -12,10 +12,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Send go.mod file content to Khazande
+      - name: Send go.mod file content to Khazande and check response
         run: |
           echo "Sending go.mod file content to Khazande ..."
-          RESPONSE=$(curl -POST -vvv -H "Content-Type: text/plain" --data-binary @go.mod http://37.32.7.91:3000/api/fetch-vulnerabilities/Go)
-          echo "Response from Khazande:"
-          echo "$RESPONSE"
 
+          # Send the HTTP POST request and capture the response and status code
+          RESPONSE=$(curl -s -o response.txt -w "%{http_code}" -POST -H "Content-Type: text/plain" --data-binary @go.mod http://37.32.7.91:3000/api/fetch-vulnerabilities/Go)
+
+          # Read the response body
+          RESPONSE_BODY=$(cat response.txt)
+
+          echo "Response from Khazande:"
+          echo "$RESPONSE_BODY"
+
+          # Check if the response status code is 200
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Error: HTTP status code $RESPONSE"
+            exit 1
+          fi
