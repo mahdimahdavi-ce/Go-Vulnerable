@@ -1,0 +1,21 @@
+name: Vulnerability Scanner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  vulnerability-scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Send go.mod file content to Khazande
+        run: |
+          echo "Sending go.mod file content to Khazande ..."
+          RESPONSE=$(curl -POST -vvv -H "Content-Type: text/plain" --data-binary @go.mod http://37.32.7.91:3000/api/fetch-vulnerabilities/Go)
+          echo "Response from Khazande:"
+          echo "$RESPONSE"
+
