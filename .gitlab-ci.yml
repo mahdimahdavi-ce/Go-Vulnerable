@@ -1,0 +1,13 @@
+stages:
+  - Vulnerabilities
+
+vulnerability-scanner:
+  stage: Vulnerabilities
+  script:
+    - echo "Sending go.mod file content to Khazande ..."
+    - |
+      RESPONSE=$(curl -X GET -vvv http://37.32.7.91:3001/api/health)
+      echo "Response from Khazande:"
+      echo "$RESPONSE"
+  only:
+    - main
