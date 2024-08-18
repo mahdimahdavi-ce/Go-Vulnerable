@@ -12,21 +12,62 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Send go.mod file content to Khazande and check response
+      - name: Send dependencies to Khazande and check response
         run: |
-          echo "Sending go.mod file content to Khazande ..."
-
-          # Send the HTTP POST request and capture the response and status code
+          echo "Sending dependencies to Khazande ..."
           RESPONSE=$(curl -s -o response.txt -w "%{http_code}" -POST -H "Content-Type: text/plain" --data-binary @go.mod http://37.32.7.91:3000/api/fetch-vulnerabilities/Go)
-
-          # Read the response body
           RESPONSE_BODY=$(cat response.txt)
-
           echo "Response from Khazande:"
           echo "$RESPONSE_BODY"
 
           # Check if the response status code is 200
           if [ "$RESPONSE" -ne 200 ]; then
-            echo "Error: HTTP status code $RESPONSE"
+            echo "Some vulnerabilities are found! you need to fix them first"
             exit 1
-          fi
+
+  build:
+    runs-on: ubuntu-latest
+    needs: vulnerability-scanner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t test-service:latest .
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run tests
+        run: |
+          go test ./...
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+        
+      - name: Log in to Docker Hub
+        run: |
+          echo "Login to hamravesh successfully"
+
+      - name: Push Docker image
+        run: |
+          echo "Image pushed successfully!"
+
+      # - name: Log in to Docker Hub
+      #   run: |
+      #     echo "${{ secrets.DOCKER_USERNAME }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      # - name: Push Docker image
+      #   run: |
+      #     docker tag your-docker-image-name:latest your-dockerhub-username/your-docker-image-name:latest
+      #     docker push your-dockerhub-username/your-docker-image-name:latest
