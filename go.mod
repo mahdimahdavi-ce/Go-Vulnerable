@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/gocolly/colly v1.2.0
-	github.com/gofiber/fiber/v2 v2.40.5
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/redis/go-redis/v4 v4.0.1
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.64.0
