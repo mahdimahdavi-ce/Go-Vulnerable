@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
-	_ "github.com/mattermost/mattermost/server/v8"
 	_ "github.com/prometheus/client_golang/prometheus"
 	_ "go.mongodb.org/mongo-driver/bson"
 	_ "go.uber.org/zap"
